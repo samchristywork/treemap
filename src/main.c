@@ -48,7 +48,34 @@ int compare_tree_asc(const void *a, const void *b) {
   return (fa->data > fb->data) - (fa->data < fb->data);
 }
 
+void render_treemap(struct TreeNode *data, void (*render_func)(struct Rect, char *, int)) {
+  printf("<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+  printf("</svg>\n");
+}
+
 struct TreeNode *init_data() {
+  struct TreeNode *data = new_node(0, 0);
+  return data;
+}
+
+void svg_renderer(struct Rect r, char *label, int hue) {
+  char *color = color_hsl(hue, 50, 70);
+
+  int id=rand();
+
+  printf(
+      "<rect class=\"solid\" fill=\"%s\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+      color, id, r.w, r.h, r.x, r.y);
+
+  printf(
+      "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+      "black", r.w, r.h, r.x, r.y);
+
+  printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
+      "alignment-baseline=\"middle\">%s</text>\n",
+      "black", r.x + r.w / 2, r.y + r.h / 2, label);
+
+  free(color);
 }
 
 int main() {
