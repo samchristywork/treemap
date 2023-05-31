@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct Rect {
+  float x;
+  float y;
+  float w;
+  float h;
+};
+
 struct TreeNode {
   float data;
   int num_children;
@@ -21,10 +28,27 @@ struct TreeNode *add_child(struct TreeNode *parent, struct TreeNode *child) {
   parent->children[parent->num_children++] = child;
 
   return child;
-void render_treemap() {
 }
 
-void init_data() {
+char *color_hsl(int hue, int saturation, int lightness) {
+  char *color = malloc(20);
+  sprintf(color, "hsl(%d, %d%%, %d%%)", hue, saturation, lightness);
+  return color;
+}
+
+int compare_tree_desc(const void *a, const void *b) {
+  struct TreeNode *fa = *(struct TreeNode **)a;
+  struct TreeNode *fb = *(struct TreeNode **)b;
+  return (fa->data < fb->data) - (fa->data > fb->data);
+}
+
+int compare_tree_asc(const void *a, const void *b) {
+  struct TreeNode *fa = *(struct TreeNode **)a;
+  struct TreeNode *fb = *(struct TreeNode **)b;
+  return (fa->data > fb->data) - (fa->data < fb->data);
+}
+
+struct TreeNode *init_data() {
 }
 
 int main() {
