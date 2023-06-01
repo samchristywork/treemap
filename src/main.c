@@ -193,10 +193,12 @@ void svg_renderer(struct Rect r, char *label, int hue) {
       "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
       color_fg, r.w, r.h, r.x, r.y);
 
+  if (r.w > .05 && r.h > .05) {
+    printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
+        "alignment-baseline=\"middle\">%s</text>\n",
+        color_fg, r.x + r.w / 2, r.y + r.h / 2+.03/2, label);
+  }
 
-  printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
-      "alignment-baseline=\"middle\">%s</text>\n",
-      "black", r.x + r.w / 2, r.y + r.h / 2, label);
   printf("</g>\n");
 
   free(color_fg);
