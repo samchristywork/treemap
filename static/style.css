@@ -1,1 +1,15 @@
+.tooltip {
+  position: absolute;
+  padding: 5px 10px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 12px;
+}
 
+.hover-highlight {
+}
+
+.hover-highlight .solid {
+  filter: brightness(90%);
+}

@@ -181,6 +181,8 @@ void svg_renderer(struct Rect r, char *label, int hue) {
   printf("   </linearGradient>\n");
   printf("</defs>\n");
 
+  printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", label);
+
   printf(
       "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
       id, r.w, r.h, r.x, r.y);
@@ -193,6 +195,7 @@ void svg_renderer(struct Rect r, char *label, int hue) {
   printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
       "alignment-baseline=\"middle\">%s</text>\n",
       "black", r.x + r.w / 2, r.y + r.h / 2, label);
+  printf("</g>\n");
 
   free(color_fg);
   free(color_bg);
