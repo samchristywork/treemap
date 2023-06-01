@@ -29,8 +29,11 @@ int compare_tree_asc(const void *a, const void *b) {
   return (fa->data > fb->data) - (fa->data < fb->data);
 }
 
-struct Rect _render_treemap(struct TreeNode **children, int data_size, struct Rect available_space,
-    float *area_left, int start, int *end, void (*render_func)(struct Rect, char *, int), int hue) {
+struct Rect _render_treemap(struct TreeNode **children, int data_size,
+                            struct Rect available_space, float *area_left,
+                            int start, int *end,
+                            void (*render_func)(struct Rect, char *, char *, int),
+                            int hue) {
 
   int best_i = 0;
   float best_i_score = -1;
@@ -81,12 +84,16 @@ struct Rect _render_treemap(struct TreeNode **children, int data_size, struct Re
     char label[100];
     sprintf(label, "%d", (int)children[j + start]->data);
 
+    char tooltip[100];
+    sprintf(tooltip, "%s %d", children[j + start]->label
+        , (int)children[j + start]->data);
+
     int cell_hue = hue;
     if (cell_hue == -1) {
       cell_hue = rand() % 360;
     }
 
-    render_func((struct Rect){x, y, neww, h}, buf, cell_hue);
+    render_func((struct Rect){x, y, neww, h}, label, tooltip, cell_hue);
 
     if (children[j + start]->num_children > 0) {
       struct Rect available_space2 = (struct Rect){x, y, neww, h};
@@ -114,7 +121,7 @@ struct Rect _render_treemap(struct TreeNode **children, int data_size, struct Re
 }
 
 void render_treemap(struct TreeNode *data,
-                    void (*render_func)(struct Rect, char *, int)) {
+                    void (*render_func)(struct Rect, char *, char *, int)) {
   printf("<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
   float area_left = 0;
   for (int i = 0; i < data->num_children; i++) {
@@ -137,58 +144,48 @@ void render_treemap(struct TreeNode *data,
   printf("</svg>\n");
 }
 
-struct TreeNode *init_data() {
-  struct TreeNode *data = new_node(0, 0);
-
-  for (int i = 0; i < 5; i++) {
-    int n = rand() % 100 + 1;
-    struct TreeNode *foo = new_node(0, 0);
-    float sum = 0;
-    for (int i = 0; i < n; i++) {
-      float d = rand() % 100 + 1;
-      add_child(foo, new_node(d, 0));
-      sum += d;
-    }
-    foo->data = sum;
-    add_child(data, foo);
-  }
-
-  return data;
-}
-
-void svg_renderer(struct Rect r, char *label, int hue) {
+void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
 
-  int id=rand();
+  int id = rand();
 
   printf("<defs>\n");
-  printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"1\">\n", id);
+  printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
+         "y2=\"1\">\n",
+         id);
   printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
   printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
   printf("   </linearGradient>\n");
   printf("</defs>\n");
 
-  printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", label);
+  printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", tooltip);
 
-  printf(
-      "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-      id, r.w, r.h, r.x, r.y);
+  printf("<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
+         "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+         id, r.w, r.h, r.x, r.y);
 
-  printf(
-      "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-      color_fg, r.w, r.h, r.x, r.y);
+  printf("<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
+         "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+         color_fg, r.w, r.h, r.x, r.y);
 
   if (r.w > .05 && r.h > .05) {
-    printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
-        "alignment-baseline=\"middle\">%s</text>\n",
-        color_fg, r.x + r.w / 2, r.y + r.h / 2+.03/2, label);
+    printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+           "text-anchor=\"middle\" "
+           "alignment-baseline=\"middle\">%s</text>\n",
+           color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03 / 2, label);
   }
 
   printf("</g>\n");
 
   free(color_fg);
   free(color_bg);
+}
+
+struct TreeNode *init_data() {
+  struct TreeNode *data = new_node(0, 0);
+
+  return data;
 }
 
 int main() {

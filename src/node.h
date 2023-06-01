@@ -4,6 +4,7 @@
 struct TreeNode {
   float data;
   int num_children;
+  char *label;
   struct TreeNode **children;
 };
 

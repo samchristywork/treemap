@@ -6,6 +6,7 @@ struct TreeNode *new_node(float data, int children_count) {
   node->data = data;
   node->children = malloc(sizeof(struct TreeNode *) * children_count);
   node->num_children = children_count;
+  node->label = NULL;
   return node;
 }
 
