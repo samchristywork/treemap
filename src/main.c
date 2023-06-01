@@ -1,7 +1,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include <dirent.h>
+#include <limits.h>
 #include "node.h"
 
 struct Rect {
@@ -182,9 +185,37 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   free(color_bg);
 }
 
+void read_dir(struct TreeNode *data, char *path) {
+  DIR *d;
+  struct dirent *dir;
+  d = opendir(path);
+  if (d) {
+    while ((dir = readdir(d)) != NULL) {
+      if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+        continue;
+      }
+      fprintf(stderr, "%s\n", dir->d_name);
+      if (dir->d_type == DT_DIR) {
+      } else {
+        char filename[PATH_MAX];
+        sprintf(filename, "%s%s", path, dir->d_name);
+        FILE *f = fopen(filename, "r");
+        fseek(f, 0, SEEK_END);
+        long fsize = ftell(f);
+        fclose(f);
+
+        struct TreeNode *child = add_child(data, new_node(fsize, 0));
+        child->label = strdup(dir->d_name);
+      }
+    }
+    closedir(d);
+  }
+}
+
 struct TreeNode *init_data() {
   struct TreeNode *data = new_node(0, 0);
 
+  read_dir(data, "../notepad/");
   return data;
 }
 
