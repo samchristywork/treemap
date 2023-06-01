@@ -116,6 +116,7 @@ struct Rect _render_treemap(struct TreeNode **children, int data_size, struct Re
       int end = 0;
       float area_left = data->data;
 
+      qsort(data->children, data->num_children, sizeof(struct TreeNode *), compare_tree_asc);
       while (end != data->num_children) {
         available_space2 = _render_treemap(data->children, data->num_children, available_space2, &area_left, start, &end, render_func, cell_hue);
         start = end;
@@ -142,6 +143,7 @@ void render_treemap(struct TreeNode *data, void (*render_func)(struct Rect, char
 
   struct Rect available_space = {0, 0, 1, 1};
 
+  qsort(data->children, data->num_children, sizeof(struct TreeNode *), compare_tree_asc);
   while (end != data->num_children) {
     available_space = _render_treemap(data->children, data->num_children, available_space, &area_left, start, &end, render_func, -1);
     start = end;
