@@ -1,5 +1,7 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct Rect {
   float x;
@@ -149,6 +151,20 @@ void render_treemap(struct TreeNode *data, void (*render_func)(struct Rect, char
 
 struct TreeNode *init_data() {
   struct TreeNode *data = new_node(0, 0);
+
+  for (int i = 0; i < 5; i++) {
+    int n = rand() % 100 + 1;
+    struct TreeNode *foo = new_node(0, 0);
+    float sum = 0;
+    for (int i = 0; i < n; i++) {
+      float d = rand() % 100 + 1;
+      add_child(foo, new_node(d, 0));
+      sum += d;
+    }
+    foo->data = sum;
+    add_child(data, foo);
+  }
+
   return data;
 }
 
@@ -173,7 +189,9 @@ void svg_renderer(struct Rect r, char *label, int hue) {
 }
 
 int main() {
-  init_data();
+  struct TreeNode *data = init_data();
 
-  render_treemap();
+  srand(time(NULL));
+
+  render_treemap(data, svg_renderer);
 }
