@@ -169,23 +169,33 @@ struct TreeNode *init_data() {
 }
 
 void svg_renderer(struct Rect r, char *label, int hue) {
-  char *color = color_hsl(hue, 50, 70);
+  char *color_fg = color_hsl(hue, 50, 20);
+  char *color_bg = color_hsl(hue, 50, 70);
 
   int id=rand();
 
+  printf("<defs>\n");
+  printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"1\">\n", id);
+  printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
+  printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
+  printf("   </linearGradient>\n");
+  printf("</defs>\n");
+
   printf(
-      "<rect class=\"solid\" fill=\"%s\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-      color, id, r.w, r.h, r.x, r.y);
+      "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+      id, r.w, r.h, r.x, r.y);
 
   printf(
       "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-      "black", r.w, r.h, r.x, r.y);
+      color_fg, r.w, r.h, r.x, r.y);
+
 
   printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" text-anchor=\"middle\" "
       "alignment-baseline=\"middle\">%s</text>\n",
       "black", r.x + r.w / 2, r.y + r.h / 2, label);
 
-  free(color);
+  free(color_fg);
+  free(color_bg);
 }
 
 int main() {
