@@ -1,11 +1,11 @@
+#include <dirent.h>
+#include <limits.h>
 #include <math.h>
+#include <node.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <dirent.h>
-#include <limits.h>
-#include "node.h"
 
 struct Rect {
   float x;
@@ -32,11 +32,11 @@ int compare_tree_asc(const void *a, const void *b) {
   return (fa->data > fb->data) - (fa->data < fb->data);
 }
 
-struct Rect _render_treemap(struct TreeNode **children, int data_size,
-                            struct Rect available_space, float *area_left,
-                            int start, int *end,
-                            void (*render_func)(struct Rect, char *, char *, int),
-                            int hue) {
+struct Rect
+_render_treemap(struct TreeNode **children, int data_size,
+                struct Rect available_space, float *area_left, int start,
+                int *end, void (*render_func)(struct Rect, char *, char *, int),
+                int hue) {
 
   int best_i = 0;
   float best_i_score = -1;
@@ -88,8 +88,8 @@ struct Rect _render_treemap(struct TreeNode **children, int data_size,
     sprintf(label, "%d", (int)children[j + start]->data);
 
     char tooltip[100];
-    sprintf(tooltip, "%s %d", children[j + start]->label
-        , (int)children[j + start]->data);
+    sprintf(tooltip, "%s %d", children[j + start]->label,
+            (int)children[j + start]->data);
 
     int cell_hue = hue;
     if (cell_hue == -1) {
@@ -185,7 +185,8 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   free(color_bg);
 }
 
-void read_dir(struct TreeNode *data, char *path) {
+float read_dir(struct TreeNode *data, char *path) {
+  float size = 0;
   DIR *d;
   struct dirent *dir;
   d = opendir(path);
@@ -196,6 +197,13 @@ void read_dir(struct TreeNode *data, char *path) {
       }
       fprintf(stderr, "%s\n", dir->d_name);
       if (dir->d_type == DT_DIR) {
+        char dirname[PATH_MAX];
+        sprintf(dirname, "%s%s/", path, dir->d_name);
+        struct TreeNode *child = add_child(data, new_node(0, 0));
+        float s = read_dir(child, dirname);
+        child->data = s;
+        child->label = strdup(dir->d_name);
+        size += s;
       } else {
         char filename[PATH_MAX];
         sprintf(filename, "%s%s", path, dir->d_name);
@@ -206,10 +214,13 @@ void read_dir(struct TreeNode *data, char *path) {
 
         struct TreeNode *child = add_child(data, new_node(fsize, 0));
         child->label = strdup(dir->d_name);
+        size += fsize;
       }
     }
     closedir(d);
   }
+
+  return size;
 }
 
 struct TreeNode *init_data() {

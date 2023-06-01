@@ -1,4 +1,4 @@
-#include "node.h"
+#include <node.h>
 #include <stdlib.h>
 
 struct TreeNode *new_node(float data, int children_count) {
