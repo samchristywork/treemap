@@ -91,17 +91,6 @@ _render_treemap(struct TreeNode **children, int data_size,
     int cell_hue = hue;
     if (cell_hue == -1) {
       cell_hue = rand() % 360;
-
-      char *color_bg = color_hsl(cell_hue, 50, 70);
-      printf("<defs>\n");
-      printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
-             "y2=\"1\">\n",
-             cell_hue);
-      printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
-      printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
-      printf("   </linearGradient>\n");
-      printf("</defs>\n");
-      free(color_bg);
     }
 
     render_func((struct Rect){x, y, neww, h}, label, tooltip, cell_hue);
@@ -158,6 +147,19 @@ void render_treemap(struct TreeNode *data,
 void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
+
+  static int lastHue = -1;
+  if (lastHue != hue) {
+    printf("<defs>\n");
+    printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
+        "y2=\"1\">\n",
+        hue);
+    printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
+    printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
+    printf("   </linearGradient>\n");
+    printf("</defs>\n");
+    lastHue = hue;
+  }
 
   printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", tooltip);
 
