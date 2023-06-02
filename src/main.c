@@ -46,9 +46,6 @@ _render_treemap(struct TreeNode **children, int data_size,
       sum += children[j + start]->data;
     }
 
-    float score = 0;
-    float x = available_space.x;
-    float y = available_space.y;
     float w = available_space.w;
     float h = sum / (*area_left) * available_space.h;
 
@@ -94,6 +91,17 @@ _render_treemap(struct TreeNode **children, int data_size,
     int cell_hue = hue;
     if (cell_hue == -1) {
       cell_hue = rand() % 360;
+
+      char *color_bg = color_hsl(cell_hue, 50, 70);
+      printf("<defs>\n");
+      printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
+             "y2=\"1\">\n",
+             cell_hue);
+      printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
+      printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
+      printf("   </linearGradient>\n");
+      printf("</defs>\n");
+      free(color_bg);
     }
 
     render_func((struct Rect){x, y, neww, h}, label, tooltip, cell_hue);
@@ -151,22 +159,11 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
 
-  int id = rand();
-
-  printf("<defs>\n");
-  printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
-         "y2=\"1\">\n",
-         id);
-  printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
-  printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
-  printf("   </linearGradient>\n");
-  printf("</defs>\n");
-
   printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", tooltip);
 
   printf("<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-         id, r.w, r.h, r.x, r.y);
+         hue, r.w, r.h, r.x, r.y);
 
   printf("<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
@@ -223,17 +220,16 @@ float read_dir(struct TreeNode *data, char *path) {
   return size;
 }
 
-struct TreeNode *init_data() {
+struct TreeNode *init_data(void) {
   struct TreeNode *data = new_node(0, 0);
 
   read_dir(data, "../notepad/");
   return data;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+
   struct TreeNode *data = init_data();
-
   srand(time(NULL));
-
   render_treemap(data, svg_renderer);
 }
