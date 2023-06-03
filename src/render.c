@@ -69,7 +69,7 @@ void render_cell(struct Rect r, struct TreeNode *data,
     char label[100];
     sprintf(label, "%d", (int)data->data);
     char tooltip[100];
-    sprintf(tooltip, "%s %d", data->label, (int)data->data);
+    sprintf(tooltip, "Name: %s<br>Value: %d", data->label, (int)data->data);
     render_func(r, label, tooltip, hue);
   }
 }

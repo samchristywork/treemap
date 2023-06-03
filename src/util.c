@@ -39,7 +39,7 @@ float read_dir(struct TreeNode *data, char *path) {
         fclose(f);
 
         struct TreeNode *child = add_child(data, new_node(fsize, 0));
-        child->label = strdup(dir->d_name);
+        child->label = strdup(filename);
         size += fsize;
       }
     }
