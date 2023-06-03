@@ -48,3 +48,15 @@ float read_dir(struct TreeNode *data, char *path) {
 
   return size;
 }
+
+int compare_tree_desc(const void *a, const void *b) {
+  struct TreeNode *fa = *(struct TreeNode **)a;
+  struct TreeNode *fb = *(struct TreeNode **)b;
+  return (fa->data < fb->data) - (fa->data > fb->data);
+}
+
+int compare_tree_asc(const void *a, const void *b) {
+  struct TreeNode *fa = *(struct TreeNode **)a;
+  struct TreeNode *fb = *(struct TreeNode **)b;
+  return (fa->data > fb->data) - (fa->data < fb->data);
+}
