@@ -10,3 +10,7 @@ build/%.o: src/%.c
 
 build/main: build/main.o build/node.o
 	${CC} build/*.o ${LIBS} -o $@
+
+.PHONY: clean
+clean:
+	rm -rf build
