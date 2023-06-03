@@ -11,7 +11,7 @@ build/%.o: src/%.c
 	mkdir -p build
 	$(CC) $(INCLUDES) -c $(CFLAGS) $< -o $@
 
-build/main: build/main.o build/node.o
+build/main: build/main.o build/node.o build/render.o
 	cp -r static/* build/
 	${CC} build/*.o ${LIBS} -o $@
 
