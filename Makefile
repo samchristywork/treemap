@@ -1,4 +1,6 @@
 CC = gcc
+CFLAGS = -Wall -Wextra -Wpedantic -g
+INCLUDES = -Isrc
 
 all: build/main
 
@@ -6,9 +8,11 @@ all: build/main
 objects: $(patsubst src/%.c, build/%.o, $(wildcard src/*.c))
 
 build/%.o: src/%.c
-	$(CC) -c $< -o $@
+	mkdir -p build
+	$(CC) $(INCLUDES) -c $(CFLAGS) $< -o $@
 
 build/main: build/main.o build/node.o
+	cp -r static/* build/
 	${CC} build/*.o ${LIBS} -o $@
 
 .PHONY: clean
