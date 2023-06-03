@@ -38,7 +38,7 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
          color_fg, r.w, r.h, r.x, r.y);
 
-  if (r.w > .05 && r.h > .05) {
+  if (r.h > .04 && r.w > .02 * strlen(label)) {
     printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
            "text-anchor=\"middle\" "
            "alignment-baseline=\"middle\">%s</text>\n",
