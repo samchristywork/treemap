@@ -1,15 +1,9 @@
 #include <math.h>
 #include <node.h>
-#include <stdio.h>
 #include <render.h>
+#include <stdio.h>
 #include <stdlib.h>
-
-float aspect(float width, float height) {
-  if (height/width < width/height) {
-    return height/width;
-  }
-  return width/height;
-}
+#include <util.h>
 
 char *color_hsl(int hue, int saturation, int lightness) {
   char *color = malloc(20);
@@ -25,8 +19,8 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
   if (lastHue != hue) {
     printf("<defs>\n");
     printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
-        "y2=\"1\">\n",
-        hue);
+           "y2=\"1\">\n",
+           hue);
     printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
     printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
     printf("   </linearGradient>\n");
