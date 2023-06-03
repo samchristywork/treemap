@@ -13,4 +13,9 @@ struct Rect {
 void render_treemap(struct TreeNode *data,
                     void (*render_func)(struct Rect, char *, char *, int));
 
+void render_treemap_3(struct TreeNode *data,
+                      void (*render_func)(struct Rect, char *, char *, int));
+
+void svg_renderer(struct Rect r, char *label, char *tooltip, int hue);
+
 #endif
