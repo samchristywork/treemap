@@ -4,6 +4,10 @@ INCLUDES = -Isrc
 
 all: build/main
 
+svg: build/main
+	mkdir -p build
+	./build/main > build/treemap.svg
+
 .PHONY: objects
 objects: $(patsubst src/%.c, build/%.o, $(wildcard src/*.c))
 
