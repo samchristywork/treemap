@@ -52,12 +52,26 @@ void svg_renderer(struct Rect r, char *label, char *tooltip, int hue) {
 }
 
 void render_cell(struct Rect r, struct TreeNode *data,
-                 void (*render_func)(struct Rect, char *, char *, int)) {
-  char label[100];
-  sprintf(label, "%d", (int)data->data);
-  char tooltip[100];
-  sprintf(tooltip, "%s %d", data->label, (int)data->data);
-  render_func(r, label, tooltip, 0);
+                 void (*render_func)(struct Rect, char *, char *, int), int hue) {
+
+  if (hue == -1) {
+    hue = rand() % 360;
+  }
+
+  if (data->num_children > 0) {
+
+    qsort(data->children, data->num_children, sizeof(struct TreeNode *),
+          compare_tree_asc);
+
+    _render_treemap_3(data->children, data->num_children, r, data->data,
+                      render_func, hue);
+  } else {
+    char label[100];
+    sprintf(label, "%d", (int)data->data);
+    char tooltip[100];
+    sprintf(tooltip, "%s %d", data->label, (int)data->data);
+    render_func(r, label, tooltip, hue);
+  }
 }
 
 struct Rect
@@ -174,7 +188,7 @@ void render_treemap(struct TreeNode *data,
 
 void _render_treemap_3(struct TreeNode **data, int data_len,
                        void (*render_func)(struct Rect, char *, char *, int),
-                       struct Rect bounds) {
+                       struct Rect bounds, int hue) {
 
   float data_sum = 0;
   for (int i = 0; i < data_len; i++) {
@@ -222,13 +236,13 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w, r1.h * ratio};
 
-      render_cell(r, data[i], render_func);
+      render_cell(r, data[i], render_func, hue);
       r1.y += r.h;
     }
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2);
+      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2, hue);
       return;
     }
   } else {
@@ -271,13 +285,13 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w * ratio, r1.h};
 
-      render_cell(r, data[i], render_func);
+      render_cell(r, data[i], render_func, hue);
       r1.x += r.w;
     }
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2);
+      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2, hue);
       return;
     }
   }
@@ -291,7 +305,7 @@ void render_treemap_3(struct TreeNode *data,
   qsort(data->children, data->num_children, sizeof(struct TreeNode *),
         compare_tree_desc);
   _render_treemap_3(data->children, data->num_children, render_func,
-                    (struct Rect){0, 0, 1, 1});
+                    (struct Rect){0, 0, 1, 1}, -1);
 
   printf("</svg>\n");
 }
