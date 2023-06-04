@@ -297,13 +297,25 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
   }
 }
 
+void sort_tree(struct TreeNode *data) {
+  if (data->num_children == 0) {
+    return;
+  }
+
+  qsort(data->children, data->num_children, sizeof(struct TreeNode *),
+        compare_tree_desc);
+
+  for (int i = 0; i < data->num_children; i++) {
+    sort_tree(data->children[i]);
+  }
+}
+
 void render_treemap_3(struct TreeNode *data,
                       void (*render_func)(struct Rect, char *, char *, int)) {
   printf("<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
   printf("<rect x=\"0\" y=\"0\" width=\"1\" height=\"1\" fill=\"pink\" />\n");
 
-  qsort(data->children, data->num_children, sizeof(struct TreeNode *),
-        compare_tree_desc);
+  sort_tree(data);
   _render_treemap_3(data->children, data->num_children, render_func,
                     (struct Rect){0, 0, 1, 1}, -1);
 
