@@ -151,6 +151,9 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w, r1.h * ratio};
 
+      if (data[i]->data==0) {
+        continue;
+      }
       render_cell(r, data[i], render_func, hue);
       r1.y += r.h;
     }
@@ -200,6 +203,9 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w * ratio, r1.h};
 
+      if (data[i]->data==0) {
+        continue;
+      }
       render_cell(r, data[i], render_func, hue);
       r1.x += r.w;
     }
