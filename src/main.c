@@ -15,5 +15,5 @@ int main(int argc, char *argv[]) {
 
   struct TreeNode *data = init_data();
   srand(time(NULL));
-  render_treemap(data, svg_renderer);
+  render_treemap_3(data, svg_renderer);
 }
