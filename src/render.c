@@ -100,7 +100,6 @@ void render_cell(struct Rect r, struct TreeNode *data,
   }
 }
 
-
 void _render_treemap_3(struct TreeNode **data, int data_len,
                        void (*render_func)(struct Rect, char *, char *, char *, int),
                        struct Rect bounds, int hue) {
