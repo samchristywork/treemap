@@ -40,7 +40,7 @@ void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int 
     lastHue = hue;
   }
 
-  printf("<g class=\"hover-element\" data-tooltip=\"%s\">\n", tooltip);
+  printf("<g class=\"hover-element\" data-tooltip=\"%s\" onclick=\"console.log('%s')\">\n", tooltip, tooltip);
 
   printf("<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
