@@ -15,9 +15,28 @@ struct TreeNode *init_data(void) {
 
 int main(int argc, char *argv[]) {
 
-  add_arg('x', "width", "TODO");
-  add_arg('y', "height", "TODO");
+  add_arg('x', "width", "The width of the viewport (default 1.0).");
+  add_arg('y', "height", "The height of the viewport (default 0.6).");
   parse_opts(argc, argv);
+
+  float width = 0.;
+  float height = 0.;
+
+  if (get_is_set('x')) {
+    width = atof(get_value('x'));
+  }
+
+  if (get_is_set('y')) {
+    height = atof(get_value('y'));
+  }
+
+  if (width==0) {
+    width = 1.;
+  }
+
+  if (height==0) {
+    height = 0.6;
+  }
 
   struct TreeNode *data = init_data();
   srand(time(NULL));
