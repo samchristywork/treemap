@@ -1,9 +1,13 @@
 #include <math.h>
-#include <node.h>
 #include <render.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <util.h>
+
+void _render_treemap_3(struct TreeNode **data, int data_len,
+                       void (*render_func)(struct Rect, char *, char *, char *, int),
+                       struct Rect bounds, int hue);
 
 char *color_hsl(int hue, int saturation, int lightness) {
   char *color = malloc(20);
@@ -89,8 +93,8 @@ void render_cell(struct Rect r, struct TreeNode *data,
 
   if (data->num_children > 0) {
 
-    _render_treemap_3(data->children, data->num_children, r, data->data,
-                      render_func, hue);
+    _render_treemap_3(data->children, data->num_children, render_func,
+        r, hue);
   } else {
     char label[100];
     sprintf(label, "%d", (int)data->data);
@@ -231,13 +235,19 @@ void sort_tree(struct TreeNode *data) {
 }
 
 void render_treemap_3(struct TreeNode *data,
-                      void (*render_func)(struct Rect, char *, char *, char *, int)) {
-  printf("<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-  printf("<rect x=\"0\" y=\"0\" width=\"1\" height=\"1\" fill=\"pink\" />\n");
+                      void (*render_func)(struct Rect, char *, char *, char *, int), struct Rect viewport) {
+  printf("<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
+      viewport.x, viewport.y,
+      viewport.w, viewport.h
+      );
+  printf("<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" fill=\"pink\" />\n",
+      viewport.x, viewport.y,
+      viewport.w, viewport.h
+      );
 
   sort_tree(data);
   _render_treemap_3(data->children, data->num_children, render_func,
-                    (struct Rect){0, 0, 1, 1}, -1);
+                    viewport, -1);
 
   printf("</svg>\n");
 }

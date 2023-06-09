@@ -38,7 +38,9 @@ int main(int argc, char *argv[]) {
     height = 0.6;
   }
 
+  struct Rect viewport = {0, 0, width, height};
+
   struct TreeNode *data = init_data();
   srand(time(NULL));
-  render_treemap_3(data, svg_renderer);
+  render_treemap_3(data, svg_renderer, viewport);
 }
