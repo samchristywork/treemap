@@ -73,11 +73,11 @@ void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int 
       printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
           "text-anchor=\"middle\" "
           "alignment-baseline=\"middle\">%s</text>\n",
-          color_fg, r.x + r.w / 2, r.y + r.h / 2, label1);
+          color_fg, r.x + r.w / 2, r.y + r.h / 2, label2);
       printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
           "text-anchor=\"middle\" "
           "alignment-baseline=\"middle\">%s</text>\n",
-          color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03, label2);
+          color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03, label1);
       break;
     case 1:
       printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
