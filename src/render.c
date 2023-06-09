@@ -19,6 +19,14 @@ void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int 
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
 
+  if (label1 == NULL) {
+    label1 = "NULL";
+  }
+
+  if (label2 == NULL) {
+    label2 = "NULL";
+  }
+
   static int lastHue = -1;
   if (lastHue != hue) {
     printf("<defs>\n");
