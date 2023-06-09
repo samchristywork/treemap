@@ -242,6 +242,40 @@ void sort_tree(struct TreeNode *data) {
   }
 }
 
+void blue() {
+  fprintf(stderr, "\033[0;34m");
+}
+
+void green() {
+  fprintf(stderr, "\033[0;32m");
+}
+
+void clear() {
+  fprintf(stderr, "\033[0m");
+}
+
+void print_tree(struct TreeNode *data) {
+  static int depth = 0;
+  for (int i = 0; i < depth; i++) {
+    fprintf(stderr, "  ");
+  }
+
+  blue();
+  fprintf(stderr, "%8.0f", data->data);
+  clear();
+  fprintf(stderr, " → ");
+  green();
+  fprintf(stderr, "%s", data->label);
+  clear();
+  fprintf(stderr, "\n");
+
+  for (int i = 0; i < data->num_children; i++) {
+    depth++;
+    print_tree(data->children[i]);
+    depth--;
+  }
+}
+
 void render_treemap_3(struct TreeNode *data,
                       void (*render_func)(struct Rect, char *, char *, char *, int), struct Rect viewport) {
   printf("<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
