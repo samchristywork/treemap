@@ -11,6 +11,7 @@ float aspect(float width, float height) {
 }
 
 float read_dir(struct TreeNode *data, char *path) {
+  char *ignore_list[] = {".", "..", ".git", NULL};
   data->label = strdup(path);
 
   static int path_len = 0;
@@ -24,6 +25,12 @@ float read_dir(struct TreeNode *data, char *path) {
   if (d) {
     while ((dir = readdir(d)) != NULL) {
       int ignore = 0;
+      for (int i = 0; ignore_list[i] != NULL; i++) {
+        if (strcmp(dir->d_name, ignore_list[i]) == 0) {
+          ignore = 1;
+          break;
+        }
+      }
       if (ignore) {
         continue;
       }
@@ -34,7 +41,7 @@ float read_dir(struct TreeNode *data, char *path) {
         struct TreeNode *child = add_child(data, new_node(0, 0));
         float s = read_dir(child, dirname);
         child->data = s;
-        child->label = strdup(dir->d_name);
+        child->label = strdup(dirname + path_len);
         size += s;
 
       } else {
@@ -46,7 +53,7 @@ float read_dir(struct TreeNode *data, char *path) {
         fclose(f);
 
         struct TreeNode *child = add_child(data, new_node(fsize, 0));
-        child->label = strdup(filename);
+        child->label = strdup(filename + path_len);
         size += fsize;
       }
     }
