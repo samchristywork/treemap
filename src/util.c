@@ -11,13 +11,20 @@ float aspect(float width, float height) {
 }
 
 float read_dir(struct TreeNode *data, char *path) {
+  data->label = strdup(path);
+
+  static int path_len = 0;
+  if (path_len == 0) {
+    path_len = strlen(path);
+  }
+
   float size = 0;
-  DIR *d;
   struct dirent *dir;
-  d = opendir(path);
+  DIR *d = opendir(path);
   if (d) {
     while ((dir = readdir(d)) != NULL) {
-      if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+      int ignore = 0;
+      if (ignore) {
         continue;
       }
 
@@ -46,6 +53,7 @@ float read_dir(struct TreeNode *data, char *path) {
     closedir(d);
   }
 
+  data->data = size;
   return size;
 }
 
