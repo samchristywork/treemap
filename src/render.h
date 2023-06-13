@@ -10,10 +10,9 @@ struct Rect {
   float h;
 };
 
+void render_treemap(char **svg, struct TreeNode *data,
+                      void (*render_func)(char **, struct Rect, char *, char *, char *, int), struct Rect viewport);
 
-void render_treemap_3(struct TreeNode *data,
-                      void (*render_func)(struct Rect, char *, char *, char *, int), struct Rect viewport);
-
-void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int hue);
+void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *tooltip, int hue);
 
 #endif

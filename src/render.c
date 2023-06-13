@@ -5,8 +5,8 @@
 #include <string.h>
 #include <util.h>
 
-void _render_treemap_3(struct TreeNode **data, int data_len,
-                       void (*render_func)(struct Rect, char *, char *, char *, int),
+void _render_treemap(char **svg, struct TreeNode **data, int data_len,
+                       void (*render_func)(char **, struct Rect, char *, char *, char *, int),
                        struct Rect bounds, int hue);
 
 char *color_hsl(int hue, int saturation, int lightness) {
@@ -15,7 +15,7 @@ char *color_hsl(int hue, int saturation, int lightness) {
   return color;
 }
 
-void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int hue) {
+void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *tooltip, int hue) {
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
 
@@ -92,8 +92,8 @@ void svg_renderer(struct Rect r, char *label1, char *label2, char *tooltip, int 
   free(color_bg);
 }
 
-void render_cell(struct Rect r, struct TreeNode *data,
-                 void (*render_func)(struct Rect, char *, char *, char *, int), int hue) {
+void render_cell(char **svg, struct Rect r, struct TreeNode *data,
+                 void (*render_func)(char **, struct Rect, char *, char *, char *, int), int hue) {
 
   if (hue == -1) {
     hue = rand() % 360;
@@ -101,7 +101,7 @@ void render_cell(struct Rect r, struct TreeNode *data,
 
   if (data->num_children > 0) {
 
-    _render_treemap_3(data->children, data->num_children, render_func,
+    _render_treemap(svg, data->children, data->num_children, render_func,
         r, hue);
   } else {
     char label[100];
@@ -112,8 +112,8 @@ void render_cell(struct Rect r, struct TreeNode *data,
   }
 }
 
-void _render_treemap_3(struct TreeNode **data, int data_len,
-                       void (*render_func)(struct Rect, char *, char *, char *, int),
+void _render_treemap(char **svg, struct TreeNode **data, int data_len,
+                       void (*render_func)(char **, struct Rect, char *, char *, char *, int),
                        struct Rect bounds, int hue) {
 
   float data_sum = 0;
@@ -165,13 +165,13 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       if (data[i]->data==0) {
         continue;
       }
-      render_cell(r, data[i], render_func, hue);
+      render_cell(svg, r, data[i], render_func, hue);
       r1.y += r.h;
     }
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2, hue);
+      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2, hue);
       return;
     }
   } else {
@@ -217,13 +217,13 @@ void _render_treemap_3(struct TreeNode **data, int data_len,
       if (data[i]->data==0) {
         continue;
       }
-      render_cell(r, data[i], render_func, hue);
+      render_cell(svg, r, data[i], render_func, hue);
       r1.x += r.w;
     }
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap_3(data + best_n, data_len - best_n, render_func, r2, hue);
+      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2, hue);
       return;
     }
   }
@@ -276,8 +276,9 @@ void print_tree(struct TreeNode *data) {
   }
 }
 
-void render_treemap_3(struct TreeNode *data,
-                      void (*render_func)(struct Rect, char *, char *, char *, int), struct Rect viewport) {
+void render_treemap(char **svg, struct TreeNode *data,
+                      void (*render_func)(char **, struct Rect, char *, char *, char *, int), struct Rect viewport) {
+
   printf("<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
       viewport.x, viewport.y,
       viewport.w, viewport.h
@@ -288,7 +289,7 @@ void render_treemap_3(struct TreeNode *data,
       );
 
   sort_tree(data);
-  _render_treemap_3(data->children, data->num_children, render_func,
+  _render_treemap(svg, data->children, data->num_children, render_func,
                     viewport, -1);
 
   printf("</svg>\n");
