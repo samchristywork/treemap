@@ -15,7 +15,7 @@ struct TreeNode *init_data(void) {
 
 int main(int argc, char *argv[]) {
 
-  char *output_file = "output.svg";
+  char *output_file = NULL;
 
   add_arg('x', "width", "The width of the viewport (default 1.0).");
   add_arg('y', "height", "The height of the viewport (default 0.6).");
@@ -62,9 +62,13 @@ int main(int argc, char *argv[]) {
 
   render_treemap(&svg, data, svg_renderer, viewport);
 
-  FILE *fp = fopen(output_file, "w");
-  fprintf(fp, "%s", svg);
-  fclose(fp);
+  if (output_file == NULL) {
+    printf("%s", svg);
+  } else {
+    FILE *fp = fopen(output_file, "w");
+    fprintf(fp, "%s", svg);
+    fclose(fp);
+  }
 
   free(svg);
 }
