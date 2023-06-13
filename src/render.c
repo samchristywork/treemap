@@ -29,24 +29,24 @@ void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *t
 
   static int lastHue = -1;
   if (lastHue != hue) {
-    printf("<defs>\n");
-    printf("   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
+    append_format(svg, "<defs>\n");
+    append_format(svg, "   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
            "y2=\"1\">\n",
            hue);
-    printf("      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
-    printf("      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
-    printf("   </linearGradient>\n");
-    printf("</defs>\n");
+    append_format(svg, "      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
+    append_format(svg, "      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
+    append_format(svg, "   </linearGradient>\n");
+    append_format(svg, "</defs>\n");
     lastHue = hue;
   }
 
-  printf("<g class=\"hover-element\" data-tooltip=\"%s\" onclick=\"console.log('%s')\">\n", tooltip, tooltip);
+  append_format(svg, "<g class=\"hover-element\" data-tooltip=\"%s\" onclick=\"console.log('%s')\">\n", tooltip, tooltip);
 
-  printf("<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
+  append_format(svg, "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
          hue, r.w, r.h, r.x, r.y);
 
-  printf("<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
+  append_format(svg, "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
          "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
          color_fg, r.w, r.h, r.x, r.y);
 
@@ -70,23 +70,23 @@ void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *t
 
   switch (num_rows) {
     case 2:
-      printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
           "text-anchor=\"middle\" "
           "alignment-baseline=\"middle\">%s</text>\n",
           color_fg, r.x + r.w / 2, r.y + r.h / 2, label2);
-      printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
           "text-anchor=\"middle\" "
           "alignment-baseline=\"middle\">%s</text>\n",
           color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03, label1);
       break;
     case 1:
-      printf("<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
           "text-anchor=\"middle\" "
           "alignment-baseline=\"middle\">%s</text>\n",
           color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03 / 2, label1);
   }
 
-  printf("</g>\n");
+  append_format(svg, "</g>\n");
 
   free(color_fg);
   free(color_bg);
@@ -108,7 +108,7 @@ void render_cell(char **svg, struct Rect r, struct TreeNode *data,
     sprintf(label, "%d", (int)data->data);
     char tooltip[100];
     sprintf(tooltip, "Name: %s<br>Value: %d", data->label, (int)data->data);
-    render_func(r, label, data->label, tooltip, hue);
+    render_func(svg, r, label, data->label, tooltip, hue);
   }
 }
 
@@ -279,11 +279,11 @@ void print_tree(struct TreeNode *data) {
 void render_treemap(char **svg, struct TreeNode *data,
                       void (*render_func)(char **, struct Rect, char *, char *, char *, int), struct Rect viewport) {
 
-  printf("<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
+  append_format(svg, "<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
       viewport.x, viewport.y,
       viewport.w, viewport.h
       );
-  printf("<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" fill=\"pink\" />\n",
+  append_format(svg, "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" fill=\"pink\" />\n",
       viewport.x, viewport.y,
       viewport.w, viewport.h
       );
@@ -292,5 +292,5 @@ void render_treemap(char **svg, struct TreeNode *data,
   _render_treemap(svg, data->children, data->num_children, render_func,
                     viewport, -1);
 
-  printf("</svg>\n");
+  append_format(svg, "</svg>\n");
 }
