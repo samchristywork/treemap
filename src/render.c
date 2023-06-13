@@ -242,15 +242,15 @@ void sort_tree(struct TreeNode *data) {
   }
 }
 
-void blue() {
+void blue(void) {
   fprintf(stderr, "\033[0;34m");
 }
 
-void green() {
+void green(void) {
   fprintf(stderr, "\033[0;32m");
 }
 
-void clear() {
+void clear(void) {
   fprintf(stderr, "\033[0m");
 }
 
