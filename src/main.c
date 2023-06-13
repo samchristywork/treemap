@@ -15,8 +15,13 @@ struct TreeNode *init_data(void) {
 
 int main(int argc, char *argv[]) {
 
+  char *output_file = "output.svg";
+
   add_arg('x', "width", "The width of the viewport (default 1.0).");
   add_arg('y', "height", "The height of the viewport (default 0.6).");
+  add_arg('o', "output", "The output file (default output.svg).");
+  add_arg('s', "seed", "The seed for the random number generator (default time(NULL)).");
+
   parse_opts(argc, argv);
 
   float width = 0.;
@@ -38,6 +43,15 @@ int main(int argc, char *argv[]) {
     height = 0.6;
   }
 
+  if (get_is_set('o')) {
+    output_file = get_value('o');
+
+    if (output_file == NULL) {
+      fprintf(stderr, "Error: no output file specified.\n");
+      exit(1);
+    }
+  }
+
   struct Rect viewport = {0, 0, width, height};
 
   struct TreeNode *data = init_data();
@@ -48,7 +62,9 @@ int main(int argc, char *argv[]) {
 
   render_treemap(&svg, data, svg_renderer, viewport);
 
-  printf("%s", svg);
+  FILE *fp = fopen(output_file, "w");
+  fprintf(fp, "%s", svg);
+  fclose(fp);
 
   free(svg);
 }
