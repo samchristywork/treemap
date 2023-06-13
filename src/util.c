@@ -67,6 +67,10 @@ float read_dir(struct TreeNode *data, char *path) {
         char filename[PATH_MAX];
         sprintf(filename, "%s%s", path, dir->d_name);
         FILE *f = fopen(filename, "r");
+        if (f == NULL) {
+          fprintf(stderr, "Could not open %s\n", filename);
+          exit(EXIT_FAILURE);
+        }
         fseek(f, 0, SEEK_END);
         long fsize = ftell(f);
         fclose(f);
