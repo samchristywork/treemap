@@ -3,6 +3,21 @@
 #include <string.h>
 #include <util.h>
 
+void append_format(char **str, const char *format, ...) {
+    va_list args;
+    char *tempStr;
+
+    va_start(args, format);
+    vasprintf(&tempStr, format, args);
+    va_end(args);
+
+    *str = realloc(*str, strlen(*str) + strlen(tempStr) + 1);
+
+    strcat(*str, tempStr);
+
+    free(tempStr);
+}
+
 float aspect(float width, float height) {
   if (height / width < width / height) {
     return height / width;
