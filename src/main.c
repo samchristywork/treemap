@@ -16,6 +16,7 @@ struct TreeNode *init_data(void) {
 int main(int argc, char *argv[]) {
 
   char *output_file = NULL;
+  int seed = time(NULL);
 
   add_arg('x', "width", "The width of the viewport (default 1.0).");
   add_arg('y', "height", "The height of the viewport (default 0.6).");
@@ -52,10 +53,14 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if (get_is_set('s')) {
+    seed = atoi(get_value('s'));
+  }
+
   struct Rect viewport = {0, 0, width, height};
 
   struct TreeNode *data = init_data();
-  srand(time(NULL));
+  srand(seed);
 
   char *svg = malloc(1);
   svg[0] = '\0';
