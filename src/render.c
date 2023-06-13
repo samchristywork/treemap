@@ -6,8 +6,9 @@
 #include <util.h>
 
 void _render_treemap(char **svg, struct TreeNode **data, int data_len,
-                       void (*render_func)(char **, struct Rect, char *, char *, char *, int),
-                       struct Rect bounds, int hue);
+                     void (*render_func)(char **, struct Rect, char *, char *,
+                                         char *, int),
+                     struct Rect bounds, int hue);
 
 char *color_hsl(int hue, int saturation, int lightness) {
   char *color = malloc(20);
@@ -15,7 +16,8 @@ char *color_hsl(int hue, int saturation, int lightness) {
   return color;
 }
 
-void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *tooltip, int hue) {
+void svg_renderer(char **svg, struct Rect r, char *label1, char *label2,
+                  char *tooltip, int hue) {
   char *color_fg = color_hsl(hue, 50, 20);
   char *color_bg = color_hsl(hue, 50, 70);
 
@@ -30,27 +32,36 @@ void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *t
   static int lastHue = -1;
   if (lastHue != hue) {
     append_format(svg, "<defs>\n");
-    append_format(svg, "   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
-           "y2=\"1\">\n",
-           hue);
+    append_format(
+        svg,
+        "   <linearGradient id=\"Gradient%d\" x1=\"0\" x2=\"1\" y1=\"0\" "
+        "y2=\"1\">\n",
+        hue);
     append_format(svg, "      <stop offset=\"0%%\" stop-color=\"white\"/>\n");
-    append_format(svg, "      <stop offset=\"100%%\" stop-color=\"%s\"/>\n", color_bg);
+    append_format(svg, "      <stop offset=\"100%%\" stop-color=\"%s\"/>\n",
+                  color_bg);
     append_format(svg, "   </linearGradient>\n");
     append_format(svg, "</defs>\n");
     lastHue = hue;
   }
 
-  append_format(svg, "<g class=\"hover-element\" data-tooltip=\"%s\" onclick=\"console.log('%s')\">\n", tooltip, tooltip);
+  append_format(svg,
+                "<g class=\"hover-element\" data-tooltip=\"%s\" "
+                "onclick=\"console.log('%s')\">\n",
+                tooltip, tooltip);
 
-  append_format(svg, "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
-         "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-         hue, r.w, r.h, r.x, r.y);
+  append_format(svg,
+                "<rect class=\"solid\" fill=\"url(#Gradient%d)\" width=\"%f\" "
+                "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+                hue, r.w, r.h, r.x, r.y);
 
-  append_format(svg, "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
-         "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
-         color_fg, r.w, r.h, r.x, r.y);
+  append_format(
+      svg,
+      "<rect stroke=\"%s\" stroke-width=\".001\" fill=\"none\" width=\"%f\" "
+      "height=\"%f\" x=\"%f\" y=\"%f\" />\n",
+      color_fg, r.w, r.h, r.x, r.y);
 
-  int num_rows=2;
+  int num_rows = 2;
 
   if (r.h < .06) {
     num_rows = 1;
@@ -69,21 +80,24 @@ void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *t
   }
 
   switch (num_rows) {
-    case 2:
-      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
-          "text-anchor=\"middle\" "
-          "alignment-baseline=\"middle\">%s</text>\n",
-          color_fg, r.x + r.w / 2, r.y + r.h / 2, label2);
-      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
-          "text-anchor=\"middle\" "
-          "alignment-baseline=\"middle\">%s</text>\n",
-          color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03, label1);
-      break;
-    case 1:
-      append_format(svg, "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
-          "text-anchor=\"middle\" "
-          "alignment-baseline=\"middle\">%s</text>\n",
-          color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03 / 2, label1);
+  case 2:
+    append_format(svg,
+                  "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+                  "text-anchor=\"middle\" "
+                  "alignment-baseline=\"middle\">%s</text>\n",
+                  color_fg, r.x + r.w / 2, r.y + r.h / 2, label2);
+    append_format(svg,
+                  "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+                  "text-anchor=\"middle\" "
+                  "alignment-baseline=\"middle\">%s</text>\n",
+                  color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03, label1);
+    break;
+  case 1:
+    append_format(svg,
+                  "<text fill=\"%s\" font-size=\".03\" x=\"%f\" y=\"%f\" "
+                  "text-anchor=\"middle\" "
+                  "alignment-baseline=\"middle\">%s</text>\n",
+                  color_fg, r.x + r.w / 2, r.y + r.h / 2 + .03 / 2, label1);
   }
 
   append_format(svg, "</g>\n");
@@ -93,7 +107,9 @@ void svg_renderer(char **svg, struct Rect r, char *label1, char *label2, char *t
 }
 
 void render_cell(char **svg, struct Rect r, struct TreeNode *data,
-                 void (*render_func)(char **, struct Rect, char *, char *, char *, int), int hue) {
+                 void (*render_func)(char **, struct Rect, char *, char *,
+                                     char *, int),
+                 int hue) {
 
   if (hue == -1) {
     hue = rand() % 360;
@@ -101,8 +117,8 @@ void render_cell(char **svg, struct Rect r, struct TreeNode *data,
 
   if (data->num_children > 0) {
 
-    _render_treemap(svg, data->children, data->num_children, render_func,
-        r, hue);
+    _render_treemap(svg, data->children, data->num_children, render_func, r,
+                    hue);
   } else {
     char label[100];
     sprintf(label, "%d", (int)data->data);
@@ -113,8 +129,9 @@ void render_cell(char **svg, struct Rect r, struct TreeNode *data,
 }
 
 void _render_treemap(char **svg, struct TreeNode **data, int data_len,
-                       void (*render_func)(char **, struct Rect, char *, char *, char *, int),
-                       struct Rect bounds, int hue) {
+                     void (*render_func)(char **, struct Rect, char *, char *,
+                                         char *, int),
+                     struct Rect bounds, int hue) {
 
   float data_sum = 0;
   for (int i = 0; i < data_len; i++) {
@@ -162,7 +179,7 @@ void _render_treemap(char **svg, struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w, r1.h * ratio};
 
-      if (data[i]->data==0) {
+      if (data[i]->data == 0) {
         continue;
       }
       render_cell(svg, r, data[i], render_func, hue);
@@ -171,7 +188,8 @@ void _render_treemap(char **svg, struct TreeNode **data, int data_len,
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2, hue);
+      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2,
+                      hue);
       return;
     }
   } else {
@@ -214,7 +232,7 @@ void _render_treemap(char **svg, struct TreeNode **data, int data_len,
       float ratio = data[i]->data / best_slice_sum;
       struct Rect r = {r1.x, r1.y, r1.w * ratio, r1.h};
 
-      if (data[i]->data==0) {
+      if (data[i]->data == 0) {
         continue;
       }
       render_cell(svg, r, data[i], render_func, hue);
@@ -223,7 +241,8 @@ void _render_treemap(char **svg, struct TreeNode **data, int data_len,
 
     // Recurse
     if (data_len > best_n) {
-      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2, hue);
+      _render_treemap(svg, data + best_n, data_len - best_n, render_func, r2,
+                      hue);
       return;
     }
   }
@@ -242,17 +261,11 @@ void sort_tree(struct TreeNode *data) {
   }
 }
 
-void blue(void) {
-  fprintf(stderr, "\033[0;34m");
-}
+void blue(void) { fprintf(stderr, "\033[0;34m"); }
 
-void green(void) {
-  fprintf(stderr, "\033[0;32m");
-}
+void green(void) { fprintf(stderr, "\033[0;32m"); }
 
-void clear(void) {
-  fprintf(stderr, "\033[0m");
-}
+void clear(void) { fprintf(stderr, "\033[0m"); }
 
 void print_tree(struct TreeNode *data) {
   static int depth = 0;
@@ -277,20 +290,22 @@ void print_tree(struct TreeNode *data) {
 }
 
 void render_treemap(char **svg, struct TreeNode *data,
-                      void (*render_func)(char **, struct Rect, char *, char *, char *, int), struct Rect viewport) {
+                    void (*render_func)(char **, struct Rect, char *, char *,
+                                        char *, int),
+                    struct Rect viewport) {
 
-  append_format(svg, "<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
-      viewport.x, viewport.y,
-      viewport.w, viewport.h
-      );
-  append_format(svg, "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" fill=\"pink\" />\n",
-      viewport.x, viewport.y,
-      viewport.w, viewport.h
-      );
+  append_format(
+      svg,
+      "<svg viewBox=\"%f %f %f %f\" xmlns=\"http://www.w3.org/2000/svg\">\n",
+      viewport.x, viewport.y, viewport.w, viewport.h);
+  append_format(
+      svg,
+      "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" fill=\"pink\" />\n",
+      viewport.x, viewport.y, viewport.w, viewport.h);
 
   sort_tree(data);
   _render_treemap(svg, data->children, data->num_children, render_func,
-                    viewport, -1);
+                  viewport, -1);
 
   append_format(svg, "</svg>\n");
 }

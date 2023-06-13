@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
   add_arg('x', "width", "The width of the viewport (default 1.0).");
   add_arg('y', "height", "The height of the viewport (default 0.6).");
   add_arg('o', "output", "The output file (default output.svg).");
-  add_arg('s', "seed", "The seed for the random number generator (default time(NULL)).");
+  add_arg('s', "seed",
+          "The seed for the random number generator (default time(NULL)).");
 
   parse_opts(argc, argv);
 
@@ -36,11 +37,11 @@ int main(int argc, char *argv[]) {
     height = atof(get_value('y'));
   }
 
-  if (width==0) {
+  if (width == 0) {
     width = 1.;
   }
 
-  if (height==0) {
+  if (height == 0) {
     height = 0.6;
   }
 
