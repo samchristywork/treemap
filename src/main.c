@@ -5,19 +5,12 @@
 #include <time.h>
 #include <util.h>
 
-struct TreeNode *init_data(void) {
-  struct TreeNode *data = new_node(0, 0);
-
-  read_dir(data, "../notepad/");
-
-  return data;
-}
-
 int main(int argc, char *argv[]) {
 
   char *output_file = NULL;
   int seed = time(NULL);
 
+  add_arg('d', "data-source", "The data source (default read_dir).");
   add_arg('x', "width", "The width of the viewport (default 1.0).");
   add_arg('y', "height", "The height of the viewport (default 0.6).");
   add_arg('o', "output", "The output file (default output.svg).");
@@ -60,7 +53,23 @@ int main(int argc, char *argv[]) {
 
   struct Rect viewport = {0, 0, width, height};
 
-  struct TreeNode *data = init_data();
+  struct TreeNode *data = NULL;
+
+  if (get_is_set('d')) {
+    char *data_source = get_value('d');
+
+    if (strcmp(data_source, "read_dir") == 0) {
+      data = new_node(0, 0);
+      read_dir(data, "build/");
+    } else {
+      fprintf(stderr, "Error: unknown data source.\n");
+      exit(1);
+    }
+  } else {
+    data = new_node(0, 0);
+    read_dir(data, "build/");
+  }
+
   srand(seed);
 
   char *svg = malloc(1);
