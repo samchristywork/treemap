@@ -42,5 +42,13 @@ int main(int argc, char *argv[]) {
 
   struct TreeNode *data = init_data();
   srand(time(NULL));
-  render_treemap_3(data, svg_renderer, viewport);
+
+  char *svg = malloc(1);
+  svg[0] = '\0';
+
+  render_treemap(&svg, data, svg_renderer, viewport);
+
+  printf("%s", svg);
+
+  free(svg);
 }
